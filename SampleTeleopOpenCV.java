@@ -29,9 +29,13 @@ import org.opencv.imgproc.Moments;
 import java.util.ArrayList;
 import java.util.List;
 
+//The Above statements are all import statements
+
 
 @TeleOp(name="SampleTeleopOpenCV", group="First")
 public class SampleTeleopOpenCV extends LinearOpMode {
+
+    //Motor Declarataions
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx leftBack = null;
     private DcMotorEx rightBack = null;
@@ -39,6 +43,8 @@ public class SampleTeleopOpenCV extends LinearOpMode {
     private DcMotorEx leftFront = null;
     private  DcMotorEx rightFront = null;
     static OpenCvCamera phoneCam;
+
+    //PID Scaling Factor
     private int MAX_TPS = 1800;
 
     public void runOpMode(){
@@ -99,17 +105,6 @@ public class SampleTeleopOpenCV extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                /*
-                 * Tell the camera to start streaming images to us! Note that you must make sure
-                 * the resolution you specify is supported by the camera. If it is not, an exception
-                 * will be thrown.
-                 *
-                 * Also, we specify the rotation that the camera is used in. This is so that the image
-                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
-                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
-                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
-                 * away from the user.
-                 */
                 phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -153,7 +148,7 @@ public class SampleTeleopOpenCV extends LinearOpMode {
             if (maxSpeed > 1.0) {
                 lTarget /= maxSpeed;
                 rTarget /= maxSpeed;
-            }
+            } // Target calculations and normalization to fit within -1, 1 proportionally
 
 
             switch (SamplePipeline.direction) {
@@ -167,10 +162,13 @@ public class SampleTeleopOpenCV extends LinearOpMode {
                     break;
                 case "stop": default:
                     break;
-            }
+            } //OpenCV switch cases, only toggled if target ball detected
 
+            //Scale to TPS for PID calculations
             lTarget *= MAX_TPS;
             rTarget *= MAX_TPS;
+
+            
             // Calculate and Set power levels
             double lPower = left_PID.updatePID(lVelb, lTarget, runtime, leftBack.getPower());
             double rPower = right_PID.updatePID(rVelb, rTarget, runtime, rightBack.getPower());
@@ -203,16 +201,20 @@ public class SampleTeleopOpenCV extends LinearOpMode {
     private static class SamplePipeline extends OpenCvPipeline
     {
         boolean viewportPaused = false;
+
+        //Mats declared outside of ProcessFrame to save storage
         Mat hsv;
         Mat mask;
         Mat maskedImg;
         Mat heirarchy;
 
+        //set default values
         public static String direction = "stop";
         public static double directionMag = 0;
 
         private final double threshold = 5;
 
+        //Init Mats to avoid Null exceptions
         @Override
         public void init(Mat firstFrame)
         {
