@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@TeleOp(name="BasicPrintv2", group="First")
-public class BasicPrintv2 extends LinearOpMode {
+@TeleOp(name="SampleTeleopOpenCV", group="First")
+public class SampleTeleopOpenCV extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx leftBack = null;
     private DcMotorEx rightBack = null;
